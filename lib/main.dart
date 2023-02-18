@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dio_package/pages/create_user_page.dart';
 import 'package:flutter_dio_package/pages/fetch_and_delete_user_page.dart';
+import 'package:flutter_dio_package/pages/update_user_page.dart';
 
 import 'json_models/UserModel.dart';
 
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
           titleMedium: TextStyle(fontSize: 30),
           bodySmall: TextStyle(fontSize: 30),
           bodyLarge: TextStyle(fontSize: 30),
-          bodyMedium: TextStyle(fontSize: 20),
+          bodyMedium: TextStyle(fontSize: 25),
         ),
       ),
       home: const MyHomePage(),
@@ -58,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           children: [
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
@@ -65,13 +67,22 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               child: const Text('Get/DeleteUserPage'),
             ),
-            // ElevatedButton(
-            //   onPressed: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(builder: (context) => const CreateUserPage()),
-            //   ),
-            //   child: const Text('CreateUserPage'),
-            // ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CreateUserPage()),
+              ),
+              child: const Text('CreateUserPage'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const UpdateUserPage()),
+              ),
+              child: const Text('UpdateUserPage'),
+            ),
           ],
         ),
       ),

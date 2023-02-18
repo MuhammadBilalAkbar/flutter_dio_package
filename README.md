@@ -1,7 +1,35 @@
 ## 1. Research: Flutter Dio Package
 
 - Keywords:
-    - _[Add here a list of important keywords about the topic]_
+    - dio flutter
+    - dio vs http flutter
+    - dio interceptors in flutter
+    - dio flutter tutorial
+    - dio flutter github
+    - dio dart
+    - dio flutter example
+    - dio post request flutter example
+    - dio pub dev
+    - flutter dio post json
+    - flutter dio get request body
+    - dio interceptors in flutter example
+    - flutter dio interceptor refresh token
+    - flutter dio post form data
+    - dio get request flutter
+    - flutter dio best practices
+    - flutter dio post json
+    - flutter dio post request
+    - flutter dio best practices
+    - getx with dio flutter
+    - flutter dio example
+    - flutter dio get request body
+    - dio post
+    - dio multipart request flutter
+    - dio flutter tutorial
+    - flutter dio authorization header
+    - dio post request flutter example
+    - dio multipart request flutter
+    - 
     - ...
 - Video Title: _[Add here a short, interesting and descriptive title for the video that contains high ranking keywords]_
 

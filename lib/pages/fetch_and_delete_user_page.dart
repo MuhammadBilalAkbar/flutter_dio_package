@@ -87,7 +87,7 @@ class _GetUserState extends State<FetchAndDeleteUserPage> {
                     ),
               const SizedBox(height: 16.0),
               Text(_userInfo),
-              const SizedBox(width: 16.0),
+              const SizedBox(height: 16.0),
               _isDeleting
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
@@ -96,6 +96,9 @@ class _GetUserState extends State<FetchAndDeleteUserPage> {
                           _isDeleting = true;
                         });
                         try {
+                          //This shows HTTP 204 No Content success status response code.
+                          // It indicates that a request has succeeded, but that the
+                          // client doesn't need to navigate away from its current page.
                           await _dio
                               .delete('$_baseUrl/users/${_idController.text}');
                           if (kDebugMode) {

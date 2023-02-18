@@ -4,18 +4,19 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class CreateUserPage extends StatefulWidget {
-  const CreateUserPage({Key? key}) : super(key: key);
+class UpdateUserPage extends StatefulWidget {
+  const UpdateUserPage({Key? key}) : super(key: key);
 
   @override
-  State<CreateUserPage> createState() => _CreateUserPageState();
+  State<UpdateUserPage> createState() => _UpdateUserPageState();
 }
 
-class _CreateUserPageState extends State<CreateUserPage> {
+class _UpdateUserPageState extends State<UpdateUserPage> {
   final _dio = Dio();
   final _baseUrl = 'https://reqres.in/api';
   final _nameController = TextEditingController();
   final _jobController = TextEditingController();
+  final _idController = TextEditingController();
   bool isCreating = false;
   var _userInfo = '';
 
@@ -23,16 +24,21 @@ class _CreateUserPageState extends State<CreateUserPage> {
   void dispose() {
     _nameController;
     _jobController;
+    _idController;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Create User')),
+        appBar: AppBar(title: const Text('Update User')),
         body: Center(
           child: SingleChildScrollView(
             child: Column(
               children: [
+                TextField(
+                  controller: _idController,
+                  decoration: const InputDecoration(hintText: 'Enter Id'),
+                ),
                 TextField(
                   controller: _nameController,
                   decoration: const InputDecoration(hintText: 'Enter name'),
@@ -49,10 +55,11 @@ class _CreateUserPageState extends State<CreateUserPage> {
                           setState(() {
                             isCreating = true;
                           });
-                          if (_nameController.text != '' &&
+                          if (_idController.text != '' &&
+                              _nameController.text != '' &&
                               _jobController.text != '') {
-                            var response = await _dio.post(
-                              '$_baseUrl/users',
+                            var response = await _dio.put(
+                              '$_baseUrl/users/$_idController',
                               data: {
                                 'name': _nameController.text,
                                 'job': _jobController.text,
@@ -75,7 +82,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
                             _userInfo;
                           });
                         },
-                        child: const Text('Create user'),
+                        child: const Text('Update user'),
                       ),
                 const SizedBox(height: 16.0),
                 Text(_userInfo),
