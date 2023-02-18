@@ -17,7 +17,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   final _nameController = TextEditingController();
   final _jobController = TextEditingController();
   final _idController = TextEditingController();
-  bool isCreating = false;
+  bool isUpdating = false;
   var _userInfo = '';
 
   @override
@@ -30,7 +30,9 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Update User')),
+        appBar: AppBar(
+          title: const Text('Update User'),
+        ),
         body: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -48,12 +50,12 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   decoration: const InputDecoration(hintText: 'Enter job'),
                 ),
                 const SizedBox(height: 16.0),
-                isCreating
+                isUpdating
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: () async {
                           setState(() {
-                            isCreating = true;
+                            isUpdating = true;
                           });
                           if (_idController.text != '' &&
                               _nameController.text != '' &&
@@ -67,7 +69,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                               options: Options(
                                 headers: {
                                   HttpHeaders.contentTypeHeader:
-                                      "application/x-www-form-urlencoded",
+                                      'application/x-www-form-urlencoded',
                                 },
                               ),
                             );
@@ -78,11 +80,11 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                             }
                           }
                           setState(() {
-                            isCreating = false;
+                            isUpdating = false;
                             _userInfo;
                           });
                         },
-                        child: const Text('Update user'),
+                        child: const Text('Update User'),
                       ),
                 const SizedBox(height: 16.0),
                 Text(_userInfo),

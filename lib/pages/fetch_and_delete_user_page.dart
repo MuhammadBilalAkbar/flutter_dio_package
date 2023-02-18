@@ -56,77 +56,76 @@ class _GetUserState extends State<FetchAndDeleteUserPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Get/Fetch User'),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: _idController,
-                decoration: const InputDecoration(hintText: 'Enter ID'),
-              ),
-              const SizedBox(height: 16.0),
-              _isFetching
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          _isFetching = true;
-                        });
-                        await getUser(_idController.text);
-                        setState(() {
-                          _isFetching = false;
-                          _userInfo;
-                        });
-                      },
-                      child: const Text('Fetch/Get User'),
-                    ),
-              const SizedBox(height: 16.0),
-              Text(_userInfo),
-              const SizedBox(height: 16.0),
-              _isDeleting
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          _isDeleting = true;
-                        });
-                        try {
-                          //This shows HTTP 204 No Content success status response code.
-                          // It indicates that a request has succeeded, but that the
-                          // client doesn't need to navigate away from its current page.
-                          await _dio
-                              .delete('$_baseUrl/users/${_idController.text}');
-                          if (kDebugMode) {
-                            print('User deleted! id: ${_idController.text}');
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Get/Fetch User'),
+        ),
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: _idController,
+                  decoration: const InputDecoration(hintText: 'Enter ID'),
+                ),
+                const SizedBox(height: 16.0),
+                _isFetching
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: () async {
+                          setState(() {
+                            _isFetching = true;
+                          });
+                          await getUser(_idController.text);
+                          setState(() {
+                            _isFetching = false;
+                            _userInfo;
+                          });
+                        },
+                        child: const Text('Fetch/Get User'),
+                      ),
+                const SizedBox(height: 16.0),
+                Text(_userInfo),
+                const SizedBox(height: 16.0),
+                _isDeleting
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: () async {
+                          setState(() {
+                            _isDeleting = true;
+                          });
+                          try {
+                            //This shows HTTP 204 No Content success status response code.
+                            // It indicates that a request has succeeded, but that the
+                            // client doesn't need to navigate away from its current page.
+                            await _dio.delete(
+                                '$_baseUrl/users/${_idController.text}');
+                            if (kDebugMode) {
+                              print('User deleted! id: ${_idController.text}');
+                            }
+                          } catch (e) {
+                            if (kDebugMode) {
+                              print(
+                                  'Error deleting user: ${_idController.text}');
+                            }
                           }
-                        } catch (e) {
-                          if (kDebugMode) {
-                            print('Error deleting user: ${_idController.text}');
-                          }
-                        }
-                        final snackBar = SnackBar(
-                          content: Text(
-                            'User at id ${_idController.text} is deleted successfully!',
-                            style: const TextStyle(fontSize: 30),
-                          ),
-                        );
-                        if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        setState(() {
-                          _isDeleting = false;
-                        });
-                      },
-                      child: const Text('Delete'),
-                    ),
-            ],
+                          final snackBar = SnackBar(
+                            content: Text(
+                              'User at id ${_idController.text} is deleted successfully!',
+                              style: const TextStyle(fontSize: 30),
+                            ),
+                          );
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          setState(() {
+                            _isDeleting = false;
+                          });
+                        },
+                        child: const Text('Delete User'),
+                      ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }

@@ -28,7 +28,9 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Create User')),
+        appBar: AppBar(
+          title: const Text('Create User'),
+        ),
         body: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -60,7 +62,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
                               options: Options(
                                 headers: {
                                   HttpHeaders.contentTypeHeader:
-                                      "application/x-www-form-urlencoded",
+                                      'application/x-www-form-urlencoded',
                                 },
                               ),
                             );
@@ -75,7 +77,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
                             _userInfo;
                           });
                         },
-                        child: const Text('Create user'),
+                        child: const Text('Create User'),
                       ),
                 const SizedBox(height: 16.0),
                 Text(_userInfo),

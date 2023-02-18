@@ -1,24 +1,16 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_dio_package/pages/create_user_page.dart';
 import 'package:flutter_dio_package/pages/fetch_and_delete_user_page.dart';
 import 'package:flutter_dio_package/pages/update_user_page.dart';
 
-import 'json_models/UserModel.dart';
-
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context) =>
+    MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
@@ -40,7 +32,6 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(),
     );
   }
-}
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -51,8 +42,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) =>
+    Scaffold(
       appBar: AppBar(
         title: const Text('Dio Basics'),
       ),
@@ -88,4 +79,3 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-}
