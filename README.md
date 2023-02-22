@@ -96,33 +96,33 @@ Answer: Because, this approach is maintainable and better for large projects.
 <br />Convert single user JSON data response of `reqres` to dart code from [JSON to Dart](https://javiercbk.github.io/json_to_dart/) and make a  model named UserModel class with `UserModel.dart` file in your project.
 3. In `main.dart` file, there are three following `ElevatedButton`s:
    - First `ElevatedButton` is `Get/DeleteUserPage`, it calls `FetchAndDeleteUserPage` from `fetch_and_delete_user_page.dart` file.
-<br />It basically implements `_dio.get()` to fetch/get the user data from the `reqres` server through API key and `_dio.delete()` to delete the user data/its id from the `reqres` server through API key.
+<br />It basically implements `dio.get()` to fetch/get the user data from the `reqres` server through API key and `dio.delete()` to delete the user data/its id from the `reqres` server through API key.
 <br />![Screenshot](screenshots/Fetch,Delete.png)
 <br />Initialize the following:
 ```dart
-final _dio = Dio();
-final _baseUrl = 'https://reqres.in/api';
-var _userInfo = '';
-final _idController = TextEditingController();
-bool _isFetching = false;
-bool _isDeleting = false;
+final dio = Dio();
+final baseUrl = 'https://reqres.in/api';
+var userInfo = '';
+final idController = TextEditingController();
+bool isFetching = false;
+bool isDeleting = false;
 
 @override
 void dispose() {
-  _idController;
+  idController.dispose();
   super.dispose();
 }
 ```
-It is necessary to `dispose` the `TextEditingController` every time otherwise code may create bugs in app. `_isFetching` and `_isDeleting` is false in the start. They will be changed to `true` with `setState((){});` when user clicks on the button and `CircularProgressIndicator` will be shown while getting/deleting data from the server. After these functions are performed, `ElevatedButton` will be shown.
-<br />getUser() method: Complete URL of server is given as `path` parameter in _dio.get() -> `Response response = await _dio.get('$_baseUrl/users/$id');`
+It is necessary to `dispose` the `TextEditingController` every time otherwise code may create bugs in app. `isFetching` and `isDeleting` is false in the start. They will be changed to `true` with `setState((){});` when user clicks on the button and `CircularProgressIndicator` will be shown while getting/deleting data from the server. After these functions are performed, `ElevatedButton` will be shown.
+<br />`getUser()` method: Complete URL of server is given as `path` parameter in `dio.get()` -> `final response = await dio.get('$baseUrl/users/$id');`
 ```dart
  Future<User?> getUser(String id) async {
     User? user;
     try {
-      Response response = await _dio.get('$_baseUrl/users/$id');
-      _userInfo = response.data.toString();
+      Response response = await dio.get('$baseUrl/users/$id');
+      userInfo = response.data.toString();
       if (kDebugMode) {
-        print('User Info: $_userInfo');
+        print('User Info: $userInfo');
       }
       user = User.fromJson(response.data);
     } on DioError catch (e) {
@@ -148,83 +148,84 @@ It is necessary to `dispose` the `TextEditingController` every time otherwise co
 ```
 `Fetch/Get User` button:
 ```dart
-              _isFetching
+              isFetching
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: () async {
                         setState(() {
-                          _isFetching = true;
+                          isFetching = true;
                         });
-                        await getUser(_idController.text);
+                        await getUser(idController.text);
                         setState(() {
-                          _isFetching = false;
-                          _userInfo;
+                          isFetching = false;
+                          userInfo;
                         });
                       },
                       child: const Text('Fetch/Get User'),
                     ),
 ```
-When User id is fetched successfully, the API response with data is shown in `Text` form below this button in UI `Text(_userInfo),` and results are also printed in the console.
+When User id is fetched successfully, the API response with data is shown in `Text` form below this button in UI `Text(userInfo),` and results are also printed in the console.
 <br />![Screenshot](screenshots/Fetch.png)
-`Delete User` button with method: Complete URL of server is given as `path` parameter in _dio.delete() -> `await _dio.delete('$_baseUrl/users/${_idController.text}');`
+<br />`deleteUser()` method: Complete URL of server is given as `path` parameter in dio.delete() -> `await dio.delete('$baseUrl/users/${idController.text}');`
 ```dart
-              _isDeleting
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          _isDeleting = true;
-                        });
-                        try {
-                          //This shows HTTP 204 No Content success status response code.
-                          // It indicates that a request has succeeded, but that the
-                          // client doesn't need to navigate away from its current page.
-                          await _dio
-                              .delete('$_baseUrl/users/${_idController.text}');
-                          if (kDebugMode) {
-                            print('User deleted! id: ${_idController.text}');
-                          }
-                        } catch (e) {
-                          if (kDebugMode) {
-                            print('Error deleting user: ${_idController.text}');
-                          }
-                        }
-                        final snackBar = SnackBar(
-                          content: Text(
-                            'User at id ${_idController.text} is deleted successfully!',
-                            style: const TextStyle(fontSize: 30),
-                          ),
-                        );
-                        if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        setState(() {
-                          _isDeleting = false;
-                        });
-                      },
-                      child: const Text('Delete User'),
-                    ),
+  Future<void> deleteUser(String id) async {
+    try {
+      //This shows HTTP 204 No Content success status response code.
+      // It indicates that a request has succeeded, but that the
+      // client doesn't need to navigate away from its current page.
+      await dio.delete('$baseUrl/users/${idController.text}');
+      debugPrint('User deleted! id: ${idController.text}');
+    } catch (e) {
+      debugPrint('Error deleting user: ${idController.text}');
+    }
+  }
+```
+`Delete User` button:
+```dart
+                isDeleting
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: () async {
+                          setState(() {
+                            isDeleting = true;
+                          });
+                          await deleteUser(idController.text);
+                          final snackBar = SnackBar(
+                            content: Text(
+                              'User at id ${idController.text} is deleted successfully!',
+                              style: const TextStyle(fontSize: 30),
+                            ),
+                          );
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          setState(() {
+                            isDeleting = false;
+                          });
+                        },
+                        child: const Text('Delete User'),
+                      ),
 ```
 When user is deleted successfully, it shows `snackBar` and prints results in console.
 <br />![Screenshot](screenshots/Delete.png)
    - Second `ElevatedButton` is `CreateUserPage`, it calls `CreateUserPage` from `create_user_page.dart` file.
-<br />It basically implements `_dio.post()` to create a new user with unique id from the `reqres` server through API key.
+<br />It basically implements `dio.post()` to create a new user with unique id from the `reqres` server through API key.
 <br />Initialize the following and always remember to dispose TextEditingController:
 ```dart
-final _dio = Dio();
-final _baseUrl = 'https://reqres.in/api';
-final _nameController = TextEditingController();
-final _jobController = TextEditingController();
+final dio = Dio();
+final baseUrl = 'https://reqres.in/api';
+final nameController = TextEditingController();
+final jobController = TextEditingController();
 bool isCreating = false;
-var _userInfo = '';
+var userInfo = '';
 
 @override
 void dispose() {
-  _nameController;
-  _jobController;
+  nameController.dispose();
+  jobController.dispose();
   super.dispose();
 }
 ```
-`_isCreating` is false in the start. It will be changed to `true` with `setState((){});` when user clicks on the button and `CircularProgressIndicator` will be shown while posting(creating new user) data on the server. After this `_dio.post()` method is performed, `ElevatedButton` will be shown.
+`isCreating` is false in the start. It will be changed to `true` with `setState((){});` when user clicks on the button and `CircularProgressIndicator` will be shown while posting(creating new user) data on the server. After this `dio.post()` method is performed, `ElevatedButton` will be shown.
 <br />`Create User` button with method:
 ```dart
                 isCreating
@@ -234,13 +235,13 @@ void dispose() {
                           setState(() {
                             isCreating = true;
                           });
-                          if (_nameController.text != '' &&
-                              _jobController.text != '') {
-                            var response = await _dio.post(
-                              '$_baseUrl/users',
+                          if (nameController.text != '' &&
+                              jobController.text != '') {
+                            var response = await dio.post(
+                              '$baseUrl/users',
                               data: {
-                                'name': _nameController.text,
-                                'job': _jobController.text,
+                                'name': nameController.text,
+                                'job': jobController.text,
                               },
                               options: Options(
                                 headers: {
@@ -249,7 +250,7 @@ void dispose() {
                                 },
                               ),
                             );
-                            _userInfo = response.data.toString();
+                            userInfo = response.data.toString();
                             if (kDebugMode) {
                               print(response.statusCode);
                               print(response.data.toString());
@@ -257,7 +258,7 @@ void dispose() {
                           }
                           setState(() {
                             isCreating = false;
-                            _userInfo;
+                            userInfo;
                           });
                         },
                         child: const Text('Create User'),
@@ -265,31 +266,31 @@ void dispose() {
 ```
 In the end, API response with data is show in `Text` form:
 ```dart
-                Text(_userInfo),
+                Text(userInfo),
 ```
 <br />![Screenshot](screenshots/Create.png)
 - Third `ElevatedButton` is `UpdateUserPage`, it calls `UpdateUserPage` from `update_user_page.dart` file.
-  <br />It basically implements `_dio.put()` to update the details of an existing user with id option on the `reqres` server through API key. You can update all parameters of a user according to server requirements for a user.
+  <br />It basically implements `dio.put()` to update the details of an existing user with id option on the `reqres` server through API key. You can update all parameters of a user according to server requirements for a user.
   <br />Initialize the following and always remember to dispose TextEditingController:
 ```dart
-final _dio = Dio();
-final _baseUrl = 'https://reqres.in/api';
-final _nameController = TextEditingController();
-final _jobController = TextEditingController();
-final _idController = TextEditingController();
+final dio = Dio();
+final baseUrl = 'https://reqres.in/api';
+final nameController = TextEditingController();
+final jobController = TextEditingController();
+final idController = TextEditingController();
 bool isUpdating = false;
-var _userInfo = '';
+var userInfo = '';
 
 @override
 void dispose() {
-  _nameController;
-  _jobController;
-  _idController;
+  nameController.dispose();
+  jobController.dispose();
+  idController.dispose();
   super.dispose();
 }
 
 ```
-`isUpdating` is false in the start. It will be changed to `true` with `setState((){});` when user clicks on the button and `CircularProgressIndicator` will be shown while _dio.put() method updates the data on the server. After this `_dio.put()` method is performed, `ElevatedButton` will be shown.
+`isUpdating` is false in the start. It will be changed to `true` with `setState((){});` when user clicks on the button and `CircularProgressIndicator` will be shown while dio.put() method updates the data on the server. After this `dio.put()` method is performed, `ElevatedButton` will be shown.
 <br />`Update User` button with method: Here we provide complete URL of server as `path` and `options` as `Options(headers: {HttpHeaders.contentTypeHeader:"application/x-www-form-urlencoded",},),`.
 ```dart
                 isUpdating
@@ -299,14 +300,14 @@ void dispose() {
                           setState(() {
                             isUpdating = true;
                           });
-                          if (_idController.text != '' &&
-                              _nameController.text != '' &&
-                              _jobController.text != '') {
-                            var response = await _dio.put(
-                              '$_baseUrl/users/$_idController',
+                          if (idController.text != '' &&
+                              nameController.text != '' &&
+                              jobController.text != '') {
+                            var response = await dio.put(
+                              '$baseUrl/users/$idController',
                               data: {
-                                'name': _nameController.text,
-                                'job': _jobController.text,
+                                'name': nameController.text,
+                                'job': jobController.text,
                               },
                               options: Options(
                                 headers: {
@@ -315,15 +316,13 @@ void dispose() {
                                 },
                               ),
                             );
-                            _userInfo = response.data.toString();
-                            if (kDebugMode) {
-                              print(response.statusCode);
-                              print(response.data.toString());
-                            }
+                            userInfo = response.data.toString();
+                        debugPrint(response.statusCode.toString() +
+                                            response.data.toString());
                           }
                           setState(() {
                             isUpdating = false;
-                            _userInfo;
+                            userInfo;
                           });
                         },
                         child: const Text('Update User'),
@@ -331,6 +330,6 @@ void dispose() {
 ```
 In the end, API response with data is show in `Text` form:
 ```dart
-                Text(_userInfo),
+                Text(userInfo),
 ```
 <br />![Screenshot](screenshots/Update.png)
