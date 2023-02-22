@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CreateUserPage extends StatefulWidget {
@@ -12,17 +11,17 @@ class CreateUserPage extends StatefulWidget {
 }
 
 class _CreateUserPageState extends State<CreateUserPage> {
-  final _dio = Dio();
-  final _baseUrl = 'https://reqres.in/api';
-  final _nameController = TextEditingController();
-  final _jobController = TextEditingController();
+  final dio = Dio();
+  final baseUrl = 'https://reqres.in/api';
+  final nameController = TextEditingController();
+  final jobController = TextEditingController();
   bool isCreating = false;
-  var _userInfo = '';
+  var userInfo = '';
 
   @override
   void dispose() {
-    _nameController;
-    _jobController;
+    nameController.dispose();
+    jobController.dispose();
     super.dispose();
   }
 
@@ -36,11 +35,11 @@ class _CreateUserPageState extends State<CreateUserPage> {
             child: Column(
               children: [
                 TextField(
-                  controller: _nameController,
+                  controller: nameController,
                   decoration: const InputDecoration(hintText: 'Enter name'),
                 ),
                 TextField(
-                  controller: _jobController,
+                  controller: jobController,
                   decoration: const InputDecoration(hintText: 'Enter job'),
                 ),
                 const SizedBox(height: 16.0),
@@ -51,13 +50,13 @@ class _CreateUserPageState extends State<CreateUserPage> {
                           setState(() {
                             isCreating = true;
                           });
-                          if (_nameController.text != '' &&
-                              _jobController.text != '') {
-                            var response = await _dio.post(
-                              '$_baseUrl/users',
+                          if (nameController.text != '' &&
+                              jobController.text != '') {
+                            final response = await dio.post(
+                              '$baseUrl/users',
                               data: {
-                                'name': _nameController.text,
-                                'job': _jobController.text,
+                                'name': nameController.text,
+                                'job': jobController.text,
                               },
                               options: Options(
                                 headers: {
@@ -66,21 +65,19 @@ class _CreateUserPageState extends State<CreateUserPage> {
                                 },
                               ),
                             );
-                            _userInfo = response.data.toString();
-                            if (kDebugMode) {
-                              print(response.statusCode);
-                              print(response.data.toString());
-                            }
+                            userInfo = response.data.toString();
+                            debugPrint(response.statusCode.toString() +
+                                response.data.toString());
                           }
                           setState(() {
                             isCreating = false;
-                            _userInfo;
+                            userInfo;
                           });
                         },
                         child: const Text('Create User'),
                       ),
                 const SizedBox(height: 16.0),
-                Text(_userInfo),
+                Text(userInfo),
               ],
             ),
           ),

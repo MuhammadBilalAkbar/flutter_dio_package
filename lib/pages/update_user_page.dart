@@ -12,19 +12,19 @@ class UpdateUserPage extends StatefulWidget {
 }
 
 class _UpdateUserPageState extends State<UpdateUserPage> {
-  final _dio = Dio();
-  final _baseUrl = 'https://reqres.in/api';
-  final _nameController = TextEditingController();
-  final _jobController = TextEditingController();
-  final _idController = TextEditingController();
+  final dio = Dio();
+  final baseUrl = 'https://reqres.in/api';
+  final nameController = TextEditingController();
+  final jobController = TextEditingController();
+  final idController = TextEditingController();
   bool isUpdating = false;
-  var _userInfo = '';
+  var userInfo = '';
 
   @override
   void dispose() {
-    _nameController;
-    _jobController;
-    _idController;
+    nameController.dispose();
+    jobController.dispose();
+    idController.dispose();
     super.dispose();
   }
 
@@ -38,15 +38,15 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
             child: Column(
               children: [
                 TextField(
-                  controller: _idController,
+                  controller: idController,
                   decoration: const InputDecoration(hintText: 'Enter Id'),
                 ),
                 TextField(
-                  controller: _nameController,
+                  controller: nameController,
                   decoration: const InputDecoration(hintText: 'Enter name'),
                 ),
                 TextField(
-                  controller: _jobController,
+                  controller: jobController,
                   decoration: const InputDecoration(hintText: 'Enter job'),
                 ),
                 const SizedBox(height: 16.0),
@@ -57,14 +57,14 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                           setState(() {
                             isUpdating = true;
                           });
-                          if (_idController.text != '' &&
-                              _nameController.text != '' &&
-                              _jobController.text != '') {
-                            var response = await _dio.put(
-                              '$_baseUrl/users/$_idController',
+                          if (idController.text != '' &&
+                              nameController.text != '' &&
+                              jobController.text != '') {
+                            var response = await dio.put(
+                              '$baseUrl/users/$idController',
                               data: {
-                                'name': _nameController.text,
-                                'job': _jobController.text,
+                                'name': nameController.text,
+                                'job': jobController.text,
                               },
                               options: Options(
                                 headers: {
@@ -73,7 +73,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                 },
                               ),
                             );
-                            _userInfo = response.data.toString();
+                            userInfo = response.data.toString();
                             if (kDebugMode) {
                               print(response.statusCode);
                               print(response.data.toString());
@@ -81,13 +81,13 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                           }
                           setState(() {
                             isUpdating = false;
-                            _userInfo;
+                            userInfo;
                           });
                         },
                         child: const Text('Update User'),
                       ),
                 const SizedBox(height: 16.0),
-                Text(_userInfo),
+                Text(userInfo),
               ],
             ),
           ),

@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../json_models/UserModel.dart';
+import '../models/UserModel.dart';
 
 class FetchAndDeleteUserPage extends StatefulWidget {
   const FetchAndDeleteUserPage({Key? key}) : super(key: key);
@@ -12,47 +11,49 @@ class FetchAndDeleteUserPage extends StatefulWidget {
 }
 
 class _GetUserState extends State<FetchAndDeleteUserPage> {
-  final _dio = Dio();
-  final _baseUrl = 'https://reqres.in/api';
-  var _userInfo = '';
-  final _idController = TextEditingController();
-  bool _isFetching = false;
-  bool _isDeleting = false;
+  final dio = Dio();
+  final baseUrl = 'https://reqres.in/api';
+  var userInfo = '';
+  final idController = TextEditingController();
+  bool isFetching = false;
+  bool isDeleting = false;
 
   @override
   void dispose() {
-    _idController;
+    idController.dispose();
     super.dispose();
   }
 
   Future<User?> getUser(String id) async {
     User? user;
     try {
-      Response response = await _dio.get('$_baseUrl/users/$id');
-      _userInfo = response.data.toString();
-      if (kDebugMode) {
-        print('User Info: $_userInfo');
-      }
+      final response = await dio.get('$baseUrl/users/$id');
+      userInfo = response.data.toString();
+      debugPrint('User Info: $userInfo');
       user = User.fromJson(response.data);
-    } on DioError catch (e) {
+    } on DioError catch (error) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
-      if (e.response != null) {
-        if (kDebugMode) {
-          print('Dio error!');
-          print('STATUS: ${e.response?.statusCode}');
-          print('DATA: ${e.response?.data}');
-          print('HEADERS: ${e.response?.headers}');
-        }
-      } else {
-        // Error due to setting up or sending the request
-        if (kDebugMode) {
-          print('Error sending request!');
-          print(e.message);
-        }
+      debugPrint(error.message);
+      if (error.response != null) {
+        debugPrint(error.response!.statusCode.toString() +
+            error.response!.data.toString() +
+            error.response!.headers.toString());
       }
     }
     return user;
+  }
+
+  Future<void> deleteUser(String id) async {
+    try {
+      //This shows HTTP 204 No Content success status response code.
+      // It indicates that a request has succeeded, but that the
+      // client doesn't need to navigate away from its current page.
+      await dio.delete('$baseUrl/users/${idController.text}');
+      debugPrint('User deleted! id: ${idController.text}');
+    } catch (e) {
+      debugPrint('Error deleting user: ${idController.text}');
+    }
   }
 
   @override
@@ -65,60 +66,46 @@ class _GetUserState extends State<FetchAndDeleteUserPage> {
             child: Column(
               children: [
                 TextField(
-                  controller: _idController,
+                  controller: idController,
                   decoration: const InputDecoration(hintText: 'Enter ID'),
                 ),
                 const SizedBox(height: 16.0),
-                _isFetching
+                isFetching
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: () async {
                           setState(() {
-                            _isFetching = true;
+                            isFetching = true;
                           });
-                          await getUser(_idController.text);
+                          await getUser(idController.text);
                           setState(() {
-                            _isFetching = false;
-                            _userInfo;
+                            isFetching = false;
+                            userInfo;
                           });
                         },
                         child: const Text('Fetch/Get User'),
                       ),
                 const SizedBox(height: 16.0),
-                Text(_userInfo),
+                Text(userInfo),
                 const SizedBox(height: 16.0),
-                _isDeleting
+                isDeleting
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: () async {
                           setState(() {
-                            _isDeleting = true;
+                            isDeleting = true;
                           });
-                          try {
-                            //This shows HTTP 204 No Content success status response code.
-                            // It indicates that a request has succeeded, but that the
-                            // client doesn't need to navigate away from its current page.
-                            await _dio.delete(
-                                '$_baseUrl/users/${_idController.text}');
-                            if (kDebugMode) {
-                              print('User deleted! id: ${_idController.text}');
-                            }
-                          } catch (e) {
-                            if (kDebugMode) {
-                              print(
-                                  'Error deleting user: ${_idController.text}');
-                            }
-                          }
+                          await deleteUser(idController.text);
                           final snackBar = SnackBar(
                             content: Text(
-                              'User at id ${_idController.text} is deleted successfully!',
+                              'User at id ${idController.text} is deleted successfully!',
                               style: const TextStyle(fontSize: 30),
                             ),
                           );
                           if (!mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           setState(() {
-                            _isDeleting = false;
+                            isDeleting = false;
                           });
                         },
                         child: const Text('Delete User'),
