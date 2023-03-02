@@ -13,7 +13,7 @@ class FetchAndDeleteUserPage extends StatefulWidget {
 class _GetUserState extends State<FetchAndDeleteUserPage> {
   final dio = Dio();
   final baseUrl = 'https://reqres.in/api';
-  var userInfo = '';
+  String userInfo = '';
   final idController = TextEditingController();
   bool isFetching = false;
   bool isDeleting = false;

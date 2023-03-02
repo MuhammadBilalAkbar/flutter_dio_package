@@ -16,7 +16,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   final nameController = TextEditingController();
   final jobController = TextEditingController();
   bool isCreating = false;
-  var userInfo = '';
+  String userInfo = '';
 
   @override
   void dispose() {

@@ -18,7 +18,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   final jobController = TextEditingController();
   final idController = TextEditingController();
   bool isUpdating = false;
-  var userInfo = '';
+  String userInfo = '';
 
   @override
   void dispose() {
